@@ -33,6 +33,8 @@ class Request(_SansIORequest):
     using the functionality defined by various HTTP specs. The data in
     requests object is read-only.
 
+    request是只读的
+
     Text data is assumed to use UTF-8 encoding, which should be true for
     the vast majority of modern clients. Using an encoding set by the
     client is unsafe in Python due to extra encodings it provides, such

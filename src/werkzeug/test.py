@@ -365,6 +365,7 @@ class EnvironBuilder:
         multiprocess: bool = False,
         run_once: bool = False,
         headers: t.Optional[t.Union[Headers, t.Iterable[t.Tuple[str, str]]]] = None,
+        # data可以有多种类型
         data: t.Optional[t.Union[t.BinaryIO, str, bytes, t.Mapping[str, t.Any]]] = None,
         environ_base: t.Optional[t.Mapping[str, t.Any]] = None,
         environ_overrides: t.Optional[t.Mapping[str, t.Any]] = None,
