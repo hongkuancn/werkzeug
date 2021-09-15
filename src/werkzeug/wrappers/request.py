@@ -198,6 +198,13 @@ class Request(_SansIORequest):
         #: two arguments.  This makes it possible to use this decorator for
         #: both standalone WSGI functions as well as bound methods and
         #: partially applied functions.
+        """
+            @Request.application
+            def app(request):  # 这个app相当于f，request相当于args
+                return Response(f"Hello {request.args.get('name', 'World!')}!")
+
+            args是个tuple，相当于（environ, start_response），cls是Request
+        """
         from ..exceptions import HTTPException
 
         @functools.wraps(f)
