@@ -210,6 +210,7 @@ def parse_converter_args(argstr: str) -> t.Tuple[t.Tuple, t.Dict[str, t.Any]]:
     return tuple(args), kwargs
 
 
+# 解析rule
 def parse_rule(rule: str) -> t.Iterator[t.Tuple[t.Optional[str], t.Optional[str], str]]:
     """Parse a rule and return it as generator. Each iteration yields tuples
     in the form ``(converter, arguments, variable)``. If the converter is
@@ -693,6 +694,7 @@ class Rule(RuleFactory):
         if not string.startswith("/"):
             raise ValueError("urls must start with a leading slash")
         self.rule = string
+        # 如果终结是/,就不是leaf
         self.is_leaf = not string.endswith("/")
 
         self.map: "Map" = None  # type: ignore
@@ -818,6 +820,9 @@ class Rule(RuleFactory):
             key=self.map.sort_key,
         )
 
+    # WHY Rule如何编译regex，根本看不懂，几个属性的作用是啥
+    # _build_regex
+    # _compile_builder
     def compile(self) -> None:
         """Compiles the regular expression and stores it."""
         assert self.map is not None, "rule not bound"
@@ -889,6 +894,7 @@ class Rule(RuleFactory):
             tail = ""
 
         regex = f"^{''.join(regex_parts)}{tail}$"
+        # _regex返回的一个Pattern
         self._regex = re.compile(regex)
 
     def match(
@@ -1489,6 +1495,7 @@ class Map:
         self.sort_parameters = sort_parameters
         self.sort_key = sort_key
 
+        # add的含义很丰富，也就是这一步，计算了每个rule的_regex
         for rulefactory in rules or ():
             self.add(rulefactory)
 
@@ -1531,6 +1538,7 @@ class Map:
         :param rulefactory: a :class:`Rule` or :class:`RuleFactory`
         """
         for rule in rulefactory.get_rules(self):
+            # 一个rule只可以绑定一个Map
             rule.bind(self)
             self._rules.append(rule)
             self._rules_by_endpoint.setdefault(rule.endpoint, []).append(rule)

@@ -85,6 +85,7 @@ def test_merge_slashes_match():
     )
     adapter = url_map.bind("localhost", "/")
 
+    # merge slash会返回redirect，不会直接匹配
     with pytest.raises(r.RequestRedirect) as excinfo:
         adapter.match("/no//tail")
 
@@ -316,6 +317,7 @@ def test_greedy():
 
     assert adapter.match("/foo") == ("foo", {})
     assert adapter.match("/blub") == ("bar", {"bar": "blub"})
+    # WHY Map初始化的时候就会给rule排序，只要匹配到了，就不会向下匹配
     assert adapter.match("/he/he") == ("bar", {"bar": "he", "blub": "he"})
 
     assert adapter.build("foo", {}) == "/foo"
@@ -451,6 +453,7 @@ def test_server_name_match_default_port(base, name):
 
 
 def test_adapter_url_parameter_sorting():
+    # x是个tuple，x[1]相当于tuple中的第二个值（例子中是int），从小到大排序
     map = r.Map(
         [r.Rule("/", endpoint="index")], sort_parameters=True, sort_key=lambda x: x[1]
     )
@@ -654,6 +657,7 @@ def test_complex_routing_rules():
     assert a.build("barx_path_path", {"bar": "1", "blub": "2/3"}) == "/1/2/3"
 
 
+# WHY 添加了2种converter，意义在哪里？
 def test_default_converters():
     class MyMap(r.Map):
         default_converters = r.Map.default_converters.copy()
