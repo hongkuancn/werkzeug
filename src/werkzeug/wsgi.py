@@ -31,6 +31,10 @@ def responder(f: t.Callable[..., "WSGIApplication"]) -> "WSGIApplication":
         def application(environ, start_response):
             return Response('Hello World!')
     """
+    # lambda *a: f(*a)(*a[-2:])
+    # *a 是environ,start_reponse
+    # 相当于 application(...,environ,start_reponse)(environ,start_reponse)
+    # 相当于Response('Hello World!')(environ,start_reponse) 执行了Response的__call__方法
     return update_wrapper(lambda *a: f(*a)(*a[-2:]), f)
 
 

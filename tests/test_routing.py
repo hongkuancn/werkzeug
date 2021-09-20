@@ -797,6 +797,7 @@ def test_method_fallback():
     assert adapter.build("index") == "/"
     assert adapter.build("index", method="GET") == "/"
     assert adapter.build("hello_name", {"name": "foo"}) == "/foo"
+    # 默认不是GET method
     assert adapter.build("hello_select") == "/select"
     assert adapter.build("hello_select", method="POST") == "/select"
     assert adapter.build("search") == "/search_get"
@@ -884,6 +885,7 @@ def test_converter_parser():
 def test_alias_redirects():
     m = r.Map(
         [
+            # alias为True，转发到第一条Rule
             r.Rule("/", endpoint="index"),
             r.Rule("/index.html", endpoint="index", alias=True),
             r.Rule("/users/", defaults={"page": 1}, endpoint="users"),
@@ -949,6 +951,7 @@ def test_building_bytes():
     assert a.build("b") == "/%01%02%03"
 
 
+# 如果host_matching为True，使用server_name而不是subdomain进行匹配
 def test_host_matching():
     m = r.Map(
         [
@@ -961,6 +964,7 @@ def test_host_matching():
     )
 
     a = m.bind("www.example.com")
+    # <domain>是example.com
     assert a.match("/") == ("index", {"domain": "example.com"})
     assert a.match("/foo/") == ("x", {"domain": "example.com", "page": 1})
 

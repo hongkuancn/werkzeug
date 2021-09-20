@@ -313,6 +313,7 @@ class BuildError(RoutingException, LookupError):
         return self.closest_rule(self.adapter)
 
     def closest_rule(self, adapter: t.Optional["MapAdapter"]) -> t.Optional["Rule"]:
+        # WHY 衡量标准
         def _score_rule(rule: "Rule") -> float:
             return sum(
                 [
@@ -870,6 +871,7 @@ class Rule(RuleFactory):
                     self.arguments.add(str(variable))
                 index = index + 1
 
+        # 如果host_matching为True，此处就要解析host的内容
         _build_regex(domain_rule)
         regex_parts.append("\\|")
         self._trace.append((False, "|"))
@@ -1076,6 +1078,13 @@ class Rule(RuleFactory):
         :internal:
         """
         try:
+            # WHY
+            # self._build: t.Callable[..., t.Tuple[str, str]]
+            # self._build = self._compile_builder(False).__get__(self, None)  # type: ignore
+            # self._build_unknown: t.Callable[..., t.Tuple[str, str]]
+            # self._build_unknown = self._compile_builder(True).__get__(  # type: ignore
+            #     self, None
+            # )
             if append_unknown:
                 return self._build_unknown(**values)
             else:
