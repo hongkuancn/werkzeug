@@ -48,7 +48,9 @@ class TestFormParser:
             content_type="application/x-www-form-urlencoded",
             method="POST",
         )
+        # WHY 运行到这一行，就有form的内容了
         req.max_content_length = 400
+        # WHY 没有确切找到form在何处生成的
         assert req.form["foo"] == "Hello World"
 
         req = Request.from_values(

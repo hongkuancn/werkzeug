@@ -276,6 +276,7 @@ def test_get_host_fallback():
 
 
 def test_get_current_url_unicode():
+    # 和下一个方法对比，_wsgi_encoding_dance 方法是区别
     env = create_environ(query_string="foo=bar&baz=blah&meh=\xcf")
     rv = wsgi.get_current_url(env)
     assert rv == "http://localhost/?foo=bar&baz=blah&meh=\xcf"
