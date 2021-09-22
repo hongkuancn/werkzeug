@@ -163,6 +163,7 @@ def _wsgi_encoding_dance(
 
 
 def _get_environ(obj: t.Union["WSGIEnvironment", "Request"]) -> "WSGIEnvironment":
+    # 检查obj是否有environ，如果没有直接obj，写法
     env = getattr(obj, "environ", obj)
     assert isinstance(
         env, dict
