@@ -41,6 +41,7 @@ class TestNativeItermethods:
         assert list(d.items(2)) == expected_items * 2
 
 
+# WHY 这个为什么搞成这种父类test
 class _MutableMultiDictTests:
     storage_class: t.Type["ds.MultiDict"]
 
@@ -316,6 +317,7 @@ class TestImmutableMultiDict(_ImmutableDictTests):
         cls = self.storage_class
         immutable = cls({"a": [1, 2], "b": 2})
         immutable2 = cls({"a": [1], "b": 2})
+        # x是个set
         x = {immutable}
         assert immutable in x
         assert immutable2 not in x
@@ -755,6 +757,7 @@ class TestHeaders:
     def test_setlist(self):
         h = self.storage_class([("a", "0"), ("b", "1"), ("c", "2")])
         h.setlist("b", ["3", "4"])
+        # [('a', '0'), ('b', '3'), ('c', '2'), ('b', '4')]
         assert h[1] == ("b", "3")
         assert h[-1] == ("b", "4")
         h.setlist("b", [])
@@ -892,10 +895,13 @@ def make_call_asserter(func=None):
     """
     calls = [0]
 
+    # context manager如何使用，yield会被as获取，https://stackoverflow.com/a/18003208
     @contextmanager
     def asserter(count, msg=None):
         calls[0] = 0
+        # yield会被as获取
         yield
+        # 执行完with中的内容，就会走到这一句，检查是否都执行
         assert calls[0] == count
 
     def wrapped(*args, **kwargs):
@@ -906,6 +912,7 @@ def make_call_asserter(func=None):
     return asserter, wrapped
 
 
+# GOOD 这个写法很骚气
 class TestCallbackDict:
     storage_class = ds.CallbackDict
 
@@ -926,10 +933,12 @@ class TestCallbackDict:
             dct.pop("z", None)
             dct.setdefault("a")
 
+    # 对于setitem和delitem，先变更，然后执行on_update方法，在这里，on_update方法就是wrapped
     def test_callback_dict_writes(self):
         assert_calls, func = make_call_asserter()
         initial = {"a": "foo", "b": "bar"}
         dct = self.storage_class(initial=initial, on_update=func)
+        # 因为with中有8个调用到on_update的方法，所以是8
         with assert_calls(8, "callback not triggered by write method"):
             # always-write methods
             dct["z"] = 123

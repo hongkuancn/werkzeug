@@ -184,6 +184,7 @@ class ImmutableMultiDictMixin(ImmutableDictMixin):
 
 def _calls_update(name):
     def oncall(self, *args, **kw):
+        # WHY super的使用 https://stackoverflow.com/a/27134600
         rv = getattr(super(UpdateDictMixin, self), name)(*args, **kw)
 
         if self.on_update is not None:
@@ -659,6 +660,8 @@ class OrderedMultiDict(MultiDict):
     In general an :class:`OrderedMultiDict` is an order of magnitude
     slower than a :class:`MultiDict`.
 
+    就是一个数组加链表组合的hashmap
+
     .. admonition:: note
 
        Due to a limitation in Python you cannot convert an ordered
@@ -760,6 +763,7 @@ class OrderedMultiDict(MultiDict):
             yield values
 
     def add(self, key, value):
+        # dict.setdefault(self, key, []) 返回一个key的array
         dict.setdefault(self, key, []).append(_omd_bucket(self, key, value))
 
     def getlist(self, key, type=None):
@@ -2233,6 +2237,8 @@ class HeaderSet(MutableSet):
     """Similar to the :class:`ETags` class this implements a set-like structure.
     Unlike :class:`ETags` this is case insensitive and used for vary, allow, and
     content-language headers.
+
+    一个list，一个set
 
     If not constructed using the :func:`parse_set_header` function the
     instantiation works like this:
