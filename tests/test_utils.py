@@ -54,6 +54,7 @@ def test_cached_property():
     foo = []
 
     class A:
+        # 想象prop是个非常耗时的方法，cache_property只执行一次prop方法，设置一个prop属性在A的instance中，直接赋值prop的执行结果，如果是property，就会再次执行prop方法
         def prop(self):
             foo.append(42)
             return 42

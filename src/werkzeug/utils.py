@@ -88,12 +88,14 @@ class cached_property(property, t.Generic[_T]):
         obj.__dict__[self.__name__] = value
 
     def __get__(self, obj: object, type: type = None) -> _T:  # type: ignore
+        # obj传进来的是instance of A
         if obj is None:
             return self  # type: ignore
 
         value: _T = obj.__dict__.get(self.__name__, _missing)
 
         if value is _missing:
+            # 执行完这句后，obj.__dict__内容就增加了，{'prop':42}
             value = self.fget(obj)  # type: ignore
             obj.__dict__[self.__name__] = value
 
