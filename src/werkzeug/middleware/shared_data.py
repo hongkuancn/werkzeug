@@ -277,12 +277,14 @@ class SharedDataMiddleware:
             if not search_path.endswith("/"):
                 search_path += "/"
 
+            # loader有三种，package、file、directory
             if path.startswith(search_path):
                 real_filename, file_loader = loader(path[len(search_path) :])
 
                 if file_loader is not None:
                     break
 
+        # 如果没有找到file，或者不允许访问，则直接用走app
         if file_loader is None or not self.is_allowed(real_filename):  # type: ignore
             return self.app(environ, start_response)
 
@@ -317,4 +319,5 @@ class SharedDataMiddleware:
             )
         )
         start_response("200 OK", headers)
+        # 找到则直接返回wrap_file
         return wrap_file(environ, f)

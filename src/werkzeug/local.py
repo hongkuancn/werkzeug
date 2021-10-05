@@ -155,6 +155,7 @@ class Local:
             raise AttributeError(name)
 
     def __setattr__(self, name: str, value: t.Any) -> None:
+        # 和Java中CopyAndWriteList有相同的实现方式
         values = self._storage.get({}).copy()
         values[name] = value
         self._storage.set(values)
@@ -474,6 +475,7 @@ def _l_to_r_op(op: F) -> F:
     return t.cast(F, r_op)
 
 
+# WHY LocalProxy的意义与作用在哪里？
 class LocalProxy:
     """A proxy to the object bound to a :class:`Local`. All operations
     on the proxy are forwarded to the bound object. If no object is

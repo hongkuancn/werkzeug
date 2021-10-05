@@ -184,4 +184,5 @@ class ProxyFix:
         if x_prefix:
             environ["SCRIPT_NAME"] = x_prefix
 
+        # 前面是middleware的功能，最后执行app，似乎是装饰者模式
         return self.app(environ, start_response)

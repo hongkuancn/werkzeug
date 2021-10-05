@@ -116,11 +116,13 @@ class ErrorStream:
         self._stream.close()
 
 
+# WHY 没太理解
 class GuardedWrite:
     def __init__(self, write: t.Callable[[bytes], None], chunks: t.List[int]) -> None:
         self._write = write
         self._chunks = chunks
 
+    # WHY 似乎没有用到
     def __call__(self, s: bytes) -> None:
         check_type("write()", s, bytes)
         self._write(s)
@@ -411,8 +413,11 @@ class LintMiddleware:
             ] = (args[2] if len(args) == 3 else None)
 
             headers_set[:] = self.check_start_response(status, headers, exc_info)
+            # 这个start_response是test.py中的start_response
             return GuardedWrite(start_response(status, headers, exc_info), chunks)
 
+        # 因为checking_start_response用了args，所以要cast一下
+        # 这里的self.app相当于test_lint中的dummy_application
         app_iter = self.app(environ, t.cast("StartResponse", checking_start_response))
         self.check_iterator(app_iter)
         return GuardedIterator(

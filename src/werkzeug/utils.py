@@ -861,6 +861,7 @@ def import_string(import_name: str, silent: bool = False) -> t.Any:
                    `None` is returned instead.
     :return: imported object
     """
+    # 把两种情况转化为一种情况，而不是两条路都往下走
     import_name = import_name.replace(":", ".")
     try:
         try:

@@ -139,6 +139,7 @@ class ProxyMiddleware:
                 chunked = True
 
             try:
+                # middleware向target发送请求
                 if target.scheme == "http":
                     con = client.HTTPConnection(
                         host, target.port or 80, timeout=self.timeout
@@ -191,6 +192,7 @@ class ProxyMiddleware:
 
                 return BadGateway()(environ, start_response)
 
+            # middleware处理请求的返回值，保证返回值符合WSGI的标准
             start_response(
                 f"{resp.status} {resp.reason}",
                 [
